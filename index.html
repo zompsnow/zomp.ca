@@ -19,9 +19,20 @@
 
     <style>
         :root {
-            --zomp: #6f8f4e;
-            --zomp-bright: #8aaa62;
-            --black: #000;
+            --background: #000000;
+            --text: #6f8f4e;
+            --text-bright: #8aaa62;
+            --muted: rgba(111, 143, 78, 0.65);
+            --toggle-background: #111111;
+            --toggle-border: #28351d;
+        }
+        :root.light {
+            --background: #f2f1ec;
+            --text: #4f6837;
+            --text-bright: #617d43;
+            --muted: rgba(79, 104, 55, 0.65);
+            --toggle-background: #e5e4de;
+            --toggle-border: #c5c7bb;
         }
 
         * {
@@ -40,8 +51,8 @@
             align-items: center;
             justify-content: center;
 
-            background: var(--black);
-            color: var(--zomp);
+            background: var(--background);
+            color: var(--text);
 
             font-family:
                 Inter,
@@ -49,11 +60,51 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
+	    transition:
+                background-color 0.25s ease,
+                color 0.25s ease;
         }
 
-        main {
-            text-align: center;
-            padding: 2rem;
+	.theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border: 1px solid var(--toggle-border);
+            border-radius: 50%;
+            background: var(--toggle-background);
+            color: var(--text);
+            cursor: pointer;
+            transition:
+                background-color 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                transform 0.15s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text-bright);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle svg {
+            width: 19px;
+            height: 19px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .logo {
@@ -74,7 +125,7 @@
             font-size: 1rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            opacity: 0.65;
+            color: var(--muted);
         }
 
         footer {
@@ -82,17 +133,40 @@
             bottom: 1.5rem;
             left: 0;
             right: 0;
-
             text-align: center;
-
             font-size: 0.75rem;
             letter-spacing: 0.1em;
-            opacity: 0.35;
+            color: var(--muted);
+        }
+
+        @media (max-width: 600px) {
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
         }
     </style>
 </head>
-
 <body>
+    <button
+        class="theme-toggle"
+        id="theme-toggle"
+        type="button"
+        aria-label="Switch to light mode"
+        title="Switch to light mode"
+    >
+        <svg id="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+        </svg>
+    </button>
     <main>
         <img class="logo" src="/logo.png" alt="Zomp">
 
@@ -104,6 +178,34 @@
     <footer>
         &copy; 2026 Zomp
     </footer>
+    <script>
+        const root = document.documentElement;
+        const toggle = document.getElementById("theme-toggle");
+
+        function setTheme(light) {
+            root.classList.toggle("light", light);
+
+            toggle.setAttribute(
+                "aria-label",
+                light ? "Switch to dark mode" : "Switch to light mode"
+            );
+
+            toggle.setAttribute(
+                "title",
+                light ? "Switch to dark mode" : "Switch to light mode"
+            );
+
+            localStorage.setItem("theme", light ? "light" : "dark");
+        }
+
+        const savedTheme = localStorage.getItem("theme");
+
+        setTheme(savedTheme === "light");
+
+        toggle.addEventListener("click", () => {
+            setTheme(!root.classList.contains("light"));
+        });
+    </script>
 </body>
 </html>
 
